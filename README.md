@@ -49,11 +49,27 @@ gpu_mem=320
 ```
 
 
+### RetroPie
+
+install:
+```
+$ git clone --depth=1 https://github.com/RetroPie/RetroPie-Setup.git
+$ cd RetroPie-Setup
+$ chmod +x retropie_setup.sh
+$ sudo ./retropie_setup.sh
+```
+
+launch from KODI:
+
+Download addon from https://github.com/BrosMakingSoftware/Kodi-Launches-Steam-Addon/releases
+
+
+
 ### Home Auto
 
 install:
 ```
-$ sudo apt-get install python-dev libboost-python-dev python-pip lirc git
+$ sudo apt-get install python-dev libboost-python-dev python-pip lirc git ruby1.9.1 nginx
 ```
 
 - WiringPi:
@@ -131,11 +147,9 @@ $ crontab -e
 
 Install:
 ```
-$ sudo apt-get install ruby1.9.1 nginx
 $ sudo gem install foreman
 
-$ cd ~/echo_fauxmo
-$ pip3 install -r requirements.txt
+$ sudo cp ~/echo_fauxmo/configs/* /
 
 ```
 
