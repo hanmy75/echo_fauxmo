@@ -39,6 +39,7 @@ gpu_mem=320
 
 install:
 ```
+$ sudo apt-get install git
 $ git clone --depth=1 https://github.com/RetroPie/RetroPie-Setup.git
 $ cd RetroPie-Setup
 $ chmod +x retropie_setup.sh
@@ -76,7 +77,7 @@ Download addon from https://github.com/BrosMakingSoftware/Kodi-Launches-Steam-Ad
 
 install:
 ```
-$ sudo apt-get install python-dev libboost-python-dev python-pip lirc git ruby1.9.1 nginx
+$ sudo apt-get install python-dev libboost-python-dev python-pip lirc ruby1.9.1 nginx
 ```
 
 - WiringPi:
@@ -155,9 +156,8 @@ $ crontab -e
 Install:
 ```
 $ sudo gem install foreman
-
+$ git clone https://github.com/hanmy75/echo_fauxmo.git
 $ sudo cp ~/echo_fauxmo/configs/* /
-
 ```
 
 Generate certificate for alexa skil:
