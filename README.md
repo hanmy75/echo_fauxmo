@@ -73,24 +73,26 @@ Download addon from https://github.com/BrosMakingSoftware/Kodi-Launches-Steam-Ad
 
 
 
-### Home Auto
+### Home Auto with Alexa
 
 install:
 ```
-$ sudo apt-get install python-dev libboost-python-dev python-pip lirc ruby1.9.1 nginx
+$ sudo apt-get install python-dev libboost-python-dev python-pip libssl-dev libffi-dev lirc ruby1.9.1 nginx
+$ sudo pip install cryptography python-dateutil Flask flask-ask
+$ sudo gem install foreman
 ```
 
 - WiringPi:
 ```
 $ cd ~
 $ git clone git://git.drogon.net/wiringPi
-$ cd ~wiringPi/
+$ cd ~/wiringPi/
 $ ./build
 ```
 
 - PI Switch (RF):
 ```
-$ cd ~wiringPi/
+$ cd ~/wiringPi/
 $ sudo pip install pi_switch
 ```
 
@@ -100,6 +102,14 @@ $ cd ~
 $ git clone https://github.com/loisaidasam/lirc-python
 $ cd ~/lirc-python
 $ sudo python setup.py install
+```
+
+- echo_fauxmo:
+```
+$ cd ~
+$ git clone https://github.com/hanmy75/echo_fauxmo.git
+$ sudo cp ~/echo_fauxmo/configs/* / -rf
+$ sudo chown pi.pi dynudns keys turn_off.sh -R
 ```
 
 
@@ -122,6 +132,8 @@ lirc_rpi gpio_in_pin=18 gpio_out_pin=27
 /etc/lirc/hardware.conf
 /etc/lirc/lircd.conf
 ```
+ * You can omit above routine. It is already done before (when you install echo_fauxmo)
+
 
 PIN Out:
 ```
@@ -151,16 +163,8 @@ $ crontab -e
 ```
 
 
-### Alexa Pi Control
+### Certificate for Alexa skil
 
-Install:
-```
-$ sudo gem install foreman
-$ git clone https://github.com/hanmy75/echo_fauxmo.git
-$ sudo cp ~/echo_fauxmo/configs/* /
-```
-
-Generate certificate for alexa skil:
 - Create private key:
 ```
 $ openssl genrsa -out private-key.pem 2048
