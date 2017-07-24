@@ -10,20 +10,6 @@ $ sudo apt-get upgrade
 $ sudo apt-get update
 ```
 
-Disable Wifi & Bluetooth:
-```
-$ sudo nano /etc/modprobe.d/raspi-blacklist.conf
-------------------------------
-# wifi
-blacklist brcmfmac
-blacklist brcmutil
-
-# bt
-blacklist btbcm
-blacklist hci_uart
-------------------------------
-```
-
 
 ### KODI
 
@@ -58,6 +44,27 @@ $ cd RetroPie-Setup
 $ chmod +x retropie_setup.sh
 $ sudo ./retropie_setup.sh
 ```
+ 1. Select Basic install
+ 2. Manage packages > Manage driver packages > ps3controller
+
+modify bluez daemon (for ps3controller):
+```
+$ sudo apt-get install -y libusb-dev libdbus-1-dev libglib2.0-dev libudev-dev libical-dev libreadline-dev
+$ git clone https://github.com/luetzel/bluez.git
+$ cd ~/bluez
+$ ./configure --prefix=/usr --mandir=/usr/share/man --sysconfdir=/etc --localstatedir=/var --enable-sixaxis
+$ make
+$ sudo make install
+$ sudo rm /etc/init.d/sixad
+$ sudo systemctl daemon-reload
+```
+
+Pairing with PS3 Controllers:
+============================
+ 1. connect it using an USB cable and wait until it rumbles
+ 2. run 'sudo sixpair'
+ 3. disconnect the USB-cable.
+
 
 launch from KODI:
 
