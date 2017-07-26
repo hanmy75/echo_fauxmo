@@ -1,6 +1,5 @@
-# echo fauxmo
-
-### Kodi and Home Automation
+Kodi and Home Automation
+============================
 
 ### Default Config and Update
 
@@ -26,7 +25,6 @@ install:
 $ sudo apt-get install git
 $ git clone --depth=1 https://github.com/RetroPie/RetroPie-Setup.git
 $ cd RetroPie-Setup
-$ chmod +x retropie_setup.sh
 $ sudo ./retropie_setup.sh
 ```
  1. Select Basic install
@@ -44,16 +42,17 @@ $ sudo rm /etc/init.d/sixad
 $ sudo systemctl daemon-reload
 ```
 
-Pairing with PS3 Controllers:
-============================
+### Pairing with PS3 Controllers:
+
  1. connect it using an USB cable and wait until it rumbles
  2. run 'sudo sixpair'
  3. disconnect the USB-cable.
 
 
-### Home Auto with Alexa
+Home Auto with Alexa
+============================
 
-install:
+### Install:
 ```
 $ sudo apt-get install python-dev libboost-python-dev python-pip libssl-dev libffi-dev lirc ruby1.9.1 nginx
 $ sudo pip install cryptography python-dateutil Flask flask-ask
@@ -91,7 +90,7 @@ $ sudo chown pi.pi dynudns keys turn_off.sh -R
 ```
 
 
-Config:
+### Config:
 
 - lirc:
 ```
