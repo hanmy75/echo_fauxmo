@@ -12,7 +12,7 @@ $ sudo apt-get update
 
 ### KODI
 
-install:
+install
 ```
 $ sudo apt-get install kodi
 ```
@@ -20,7 +20,7 @@ $ sudo apt-get install kodi
 
 ### RetroPie
 
-install:
+install
 ```
 $ sudo apt-get install git
 $ git clone --depth=1 https://github.com/RetroPie/RetroPie-Setup.git
@@ -52,14 +52,14 @@ $ sudo systemctl daemon-reload
 Home Auto with Alexa
 ============================
 
-### Install:
+### Install
 ```
 $ sudo apt-get install python-dev libboost-python-dev python-pip libssl-dev libffi-dev lirc ruby1.9.1 nginx
 $ sudo pip install cryptography python-dateutil Flask flask-ask
 $ sudo gem install foreman
 ```
 
-- WiringPi:
+- WiringPi
 ```
 $ cd ~
 $ git clone git://git.drogon.net/wiringPi
@@ -67,13 +67,13 @@ $ cd ~/wiringPi/
 $ ./build
 ```
 
-- PI Switch (RF):
+- PI Switch (RF)
 ```
 $ cd ~/wiringPi/
 $ sudo pip install pi_switch
 ```
 
-- lirc:
+- lirc
 ```
 $ cd ~
 $ git clone https://github.com/loisaidasam/lirc-python
@@ -81,7 +81,7 @@ $ cd ~/lirc-python
 $ sudo python setup.py install
 ```
 
-- echo_fauxmo:
+- echo_fauxmo
 ```
 $ cd ~
 $ git clone https://github.com/hanmy75/echo_fauxmo.git
@@ -90,9 +90,15 @@ $ sudo chown pi.pi dynudns keys turn_off.sh -R
 ```
 
 
-### Config:
+### Auto login
+```
+$ sudo systemctl enable autologin@.service
+```
 
-- lirc:
+
+### Config
+
+- lirc
 ```
 $ sudo nano /boot/config.txt
 -----------------------------------------------------------------
@@ -112,7 +118,7 @@ lirc_rpi gpio_in_pin=18 gpio_out_pin=27
  * You can omit above routine. It is already done before (when you install echo_fauxmo)
 
 
-PIN Out:
+### PIN Out
 ```
 RF Switch : GPIO17(GPIO_GEN_0)
 IR  : in GPIO18 / out GPIO27
@@ -122,7 +128,7 @@ SPEAKER Out : GPIO7
 
 ### DDNS (https://www.dynu.com)
 
-Config:
+Config
 ```
 $ cd ~
 $ mkdir dynudns
@@ -142,12 +148,12 @@ $ crontab -e
 
 ### Certificate for Alexa skil
 
-- Create private key:
+- Create private key
 ```
 $ openssl genrsa -out private-key.pem 2048
 ```
 
-- Create a configuration file:
+- Create a configuration file
 ```
 $ nano configuration.cnf
 -----------------------------------------------------------
@@ -174,7 +180,7 @@ DNS.1 = Provide your fully qualified domain name
 ```
 Replace "Provide xxxx" with your own values
 
-- Generate a certificate:
+- Generate a certificate
 ```
 $ openssl req -new -x509 -days 365 \
             -key private-key.pem \
