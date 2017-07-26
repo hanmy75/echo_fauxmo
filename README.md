@@ -18,22 +18,6 @@ install:
 $ sudo apt-get install kodi
 ```
 
-Config:
-- Auto Start:
-```
-$ sudo wget -O /etc/init.d/kodi https://gist.githubusercontent.com/shyamjos/60ea61fd8932fd5c868c80543b34f033/raw;sudo chmod +x /etc/init.d/kodi
-
-$ sudo systemctl enable kodi
-```
-
-- Memory Config:
-```
-$ sudo nano /boot/config.txt
---------------------------
-gpu_mem=320
---------------------------
-```
-
 
 ### RetroPie
 
@@ -65,12 +49,6 @@ Pairing with PS3 Controllers:
  1. connect it using an USB cable and wait until it rumbles
  2. run 'sudo sixpair'
  3. disconnect the USB-cable.
-
-
-launch from KODI:
-
-Download addon from https://github.com/BrosMakingSoftware/Kodi-Launches-Steam-Addon/releases
-
 
 
 ### Home Auto with Alexa
