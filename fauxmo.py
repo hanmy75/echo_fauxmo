@@ -54,6 +54,16 @@ SETUP_XML = """<?xml version="1.0"?>
 </root>
 """
 
+STATUS_XML = """
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+ <s:Body>
+  <u:GetBinaryState xmlns:u="urn:Belkin:service:basicevent:1">
+     <BinaryState>%(binary_status)s</BinaryState>
+  </u:GetBinaryState>
+ </s:Body>
+</s:Envelope>
+"""
+
 
 def dbg(msg):
     logging.debug(msg)
@@ -234,7 +244,7 @@ class fauxmo(upnp_device):
             if success:
                 # The echo is happy with the 200 status code and doesn't
                 # appear to care about the SOAP response body
-                soap = ""
+                soap = STATUS_XML % {'binary_status' : self.action_handler.get(client_address[0], self.name)}
                 date_str = email.utils.formatdate(timeval=None, localtime=False, usegmt=True)
                 message = ("HTTP/1.1 200 OK\r\n"
                            "CONTENT-LENGTH: %d\r\n"
@@ -247,6 +257,26 @@ class fauxmo(upnp_device):
                            "\r\n"
                            "%s" % (len(soap), date_str, soap))
                 socket.send(message)
+
+        elif data.find('SOAPACTION: "urn:Belkin:service:basicevent:1#GetBinaryState"') != -1:
+            success = True
+            if success:
+                # The echo is happy with the 200 status code and doesn't
+                # appear to care about the SOAP response body
+                soap = STATUS_XML % {'binary_status' : self.action_handler.get(client_address[0], self.name)}
+                date_str = email.utils.formatdate(timeval=None, localtime=False, usegmt=True)
+                message = ("HTTP/1.1 200 OK\r\n"
+                           "CONTENT-LENGTH: %d\r\n"
+                           "CONTENT-TYPE: text/xml charset=\"utf-8\"\r\n"
+                           "DATE: %s\r\n"
+                           "EXT:\r\n"
+                           "SERVER: Unspecified, UPnP/1.0, Unspecified\r\n"
+                           "X-User-Agent: redsonic\r\n"
+                           "CONNECTION: close\r\n"
+                           "\r\n"
+                           "%s" % (len(soap), date_str, soap))
+                socket.send(message)
+
         else:
             dbg(data)
 

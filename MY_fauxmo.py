@@ -17,7 +17,7 @@ import logging
 import time
 import RPi.GPIO as GPIO
 
-from debounce_handler import debounce_handler
+#from debounce_handler import debounce_handler
 from pi_switch import RCSwitchSender
 from lirc import Lirc
 
@@ -28,7 +28,6 @@ LOW     = False
 
 # For TV
 TV_MANUFACTORE  = 'Samsung'
-TV_COMMAND      = 'KEY_POWER'
 
 # For Speaker
 SPEAKER_OUT         = 21
@@ -59,63 +58,72 @@ GPIO.setup(SPEAKER_OUT, GPIO.OUT)
 GPIO.output(SPEAKER_OUT, HIGH)
 
 
-# Operation
-def TV_Operation(state):
-    lirc_obj.send_once(TV_MANUFACTORE, TV_COMMAND)
+# RCU Operation
+def RCU_Operation(key_code):
+    logging.debug("RCU : code %s", key_code)
+    lirc_obj.send_once(TV_MANUFACTORE, key_code)
 
-def Speaker_Operation(state):
-    GPIO.output(SPEAKER_OUT, LOW)
+# RF Operation
+def RF_Operation(key_code):
+    logging.debug("RF : code %s", key_code)
+    rf_sender.sendDecimal(key_code, 24)
+
+# GPIO Operation
+def GPIO_Operation(key_code):
+    logging.debug("GPIO : code %s", key_code)
+    GPIO.output(key_code, LOW)
     time.sleep(SPEAKER_HOLD_TIME)
-    GPIO.output(SPEAKER_OUT, HIGH)
+    GPIO.output(key_code, HIGH)
 
-def TableLamp_Operation(state):
-    if state:
-        rf_sender.sendDecimal(TABLE_LAMP_ON_COMMAND, 24)
-    else:
-        rf_sender.sendDecimal(TABLE_LAMP_OFF_COMMAND, 24)
-    time.sleep(0.5)
 
-def LivingRoom_Operation(state):
-    if state:
-        rf_sender.sendDecimal(LIVINGROOM_LAMP_ON_COMMAND, 24)
-    else:
-        rf_sender.sendDecimal(LIVINGROOM_LAMP_OFF_COMMAND, 24)
-    time.sleep(0.5)
-
-def WindowLamp_Operation(state):
-    if state:
-        rf_sender.sendDecimal(WINDOW_LAMP_ON_COMMAND, 24)
-    else:
-        rf_sender.sendDecimal(WINDOW_LAMP_OFF_COMMAND, 24)
-    time.sleep(0.5)
-
+# [0] : Device Name
+# [1] : Port Number
+# [2] : Function
+# [3] : On key
+# [4] : Off key
+# [5] : On/Off Status
+FAUXMO_DEVICES = [
+    ["TV", 52000, RCU_Operation, 'KEY_POWER', 'KEY_POWER', 2],
+    ["Speaker", 52001, GPIO_Operation, SPEAKER_OUT, SPEAKER_OUT, 2],
+    ["Table", 52002, RF_Operation, TABLE_LAMP_ON_COMMAND, TABLE_LAMP_OFF_COMMAND, 2],
+    ["Center", 52003, RF_Operation, LIVINGROOM_LAMP_ON_COMMAND, LIVINGROOM_LAMP_OFF_COMMAND, 2],
+    ["Window", 52004, RF_Operation, WINDOW_LAMP_ON_COMMAND, WINDOW_LAMP_OFF_COMMAND, 2],
+    ["Trick", 52005, RCU_Operation, 'KEY_PLAYPAUSE', 'KEY_PLAYPAUSE', 2],
+    ["Volume", 52006, RCU_Operation, 'KEY_VOLUMEUP', 'KEY_VOLUMEDOWN', 2],
+    ["Stop", 52007, RCU_Operation, 'KEY_STOP', 'KEY_STOP', 2],
+]
 
 # Main Function
-class device_handler(debounce_handler):
+class device_handler(object):
     """Publishes the on/off state requested,
        and the IP address of the Echo making the request.
     """
-    TRIGGERS = {
-        "TV":           52000,
-        "Speaker":     	52001,
-        "Table":   	52002,
-        "Center":  	52003,
-        "Window":  	52004,                                              
-    }
+    def __init__(self, name):
+        self.name = name
 
-    OPERATIONS = {
-        "TV":           TV_Operation,
-        "Speaker":     	Speaker_Operation,
-        "Table":   	TableLamp_Operation,
-        "Center":  	LivingRoom_Operation,
-        "Window":  	WindowLamp_Operation,   
-    }
-
-    def act(self, client_address, state, name):
-        print "State", state, "on ", name, "from client @", client_address
-        func = self.OPERATIONS[name]
-        func(state)
+    def on(self, client_address, name):
+        logging.debug("%s from %s on", name, client_address)
+        for one_faux in FAUXMO_DEVICES:
+            if one_faux[0] == name:
+                one_faux[2](one_faux[3])
+                one_faux[5] = 1
         return True
+
+    def off(self, client_address, name):
+        logging.debug("%s from %s off", name, client_address)
+        for one_faux in FAUXMO_DEVICES:
+            if one_faux[0] == name:
+                one_faux[2](one_faux[4])
+                one_faux[5] = 0
+        return True
+
+    def get(self, client_address, name):
+        on_off_status = 2
+        #for one_faux in FAUXMO_DEVICES:
+        #    if one_faux[0] == name:
+        #        on_off_status = one_faux[5]
+        return on_off_status
+
 
 if __name__ == "__main__":
     # Startup the fauxmo server
@@ -126,9 +134,8 @@ if __name__ == "__main__":
     p.add(u)
 
     # Register the device callback as a fauxmo handler
-    d = device_handler()
-    for trig, port in d.TRIGGERS.items():
-        fauxmo.fauxmo(trig, u, p, None, port, d)
+    for one_faux in FAUXMO_DEVICES:
+        fauxmo.fauxmo(one_faux[0], u, p, None, one_faux[1], action_handler = device_handler(""))
 
     # Loop and poll for incoming Echo requests
     logging.debug("Entering fauxmo polling loop")
